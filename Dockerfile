@@ -1,40 +1,32 @@
-# Build stage
 FROM node:20-alpine AS builder
 
-WORKDIR /build
-
-COPY package*.json ./
-# Install only production dependencies
-RUN npm install --omit=dev
-
-# App stage
-FROM node:20-alpine AS app
-
+# Set working directory
 WORKDIR /app
 
-# Copy only node_modules from builder
-COPY --from=builder /build/node_modules ./node_modules/
+# Copy only package files and install deps
+COPY package*.json ./
+RUN npm install --omit=dev
 
-# Copy application files
+# Copy source code
 COPY . .
 
-# Create statCalcData folder if it doesn't exist
-RUN mkdir -p statCalcData && \
-    chown node:node statCalcData
+# Build the statCalcData/gameData.json file
+RUN npm run build
 
-# Declare statCalcData as a volume
+FROM node:20-alpine AS app
+WORKDIR /app
+
+# Copy built app (including generated gameData.json)
+COPY --from=builder /app /app
+
+RUN chown -R node:node /app/statCalcData
 VOLUME /app/statCalcData
 
-# Install tini for better signal handling
 RUN apk update && \
-    apk add --no-cache tini && \
-    rm -rf /var/cache/apk/*
+  apk add --no-cache tini && \
+  rm -rf /var/cache/apk/*
 
-# Set node user for better security
 USER node
 
-# Set tini as entrypoint
 ENTRYPOINT ["/sbin/tini", "--"]
-
-# Default command
-CMD ["node", "app.js"]
+CMD [ "node", "app.js" ]
