@@ -4,6 +4,7 @@
   "description": "A Node app for calculating unit stats in EA's Star Wars Galaxy of Heroes.",
   "main": "app.js",
   "scripts": {
+    "build": "node src/dataBuilder.js",
     "start": "node app.js"
   },
   "dependencies": {
