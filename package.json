@@ -4,8 +4,8 @@
   "description": "A Node app for calculating unit stats in EA's Star Wars Galaxy of Heroes.",
   "main": "app.js",
   "scripts": {
-    "build": "node src/dataBuilder.js",
-    "start": "node app.js"
+    "start": "node app.js",
+    "build": "node src/dataBuilder.js"
   },
   "dependencies": {
     "@swgoh-utils/comlink": "^1.4.1",
@@ -16,13 +16,6 @@
     "mkdirp": "^1.0.4",
     "swgoh-stat-calc": "github:swgoh-utils/swgoh-stat-calc#895816e"
   },
-  "engines": {
-    "node": ">=20"
-  },
-  "repository": {
-    "url": "https://github.com/swgoh-utils/swgoh-stats"
-  },
-  "license": "MIT",
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/exec": "^6.0.3",
@@ -30,5 +23,13 @@
     "@semantic-release/github": "^9.0.3",
     "conventional-changelog-conventionalcommits": "^6.1.0",
     "semantic-release": "^21.0.6"
-  }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/swgoh-utils/swgoh-stats"
+  },
+  "license": "MIT"
 }
