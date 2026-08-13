@@ -1,28 +1,21 @@
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
-# Set working directory
-WORKDIR /app
-
-# Copy only package files and install deps
 COPY package*.json ./
+# don't install dev dependencies for the docker image
 RUN npm install --omit=dev
 
-# Copy source code
-COPY . .
-
-# Build the statCalcData/gameData.json file
-RUN npm run build
-
-FROM node:20-alpine AS app
+FROM node:24-alpine AS app
 WORKDIR /app
 
-# Copy built app (including generated gameData.json)
-COPY --from=builder /app /app
-
-RUN chown -R node:node /app/statCalcData
+COPY --from=builder node_modules node_modules/
+# copy the rest after
+COPY . .
+RUN chown node:node statCalcData
 VOLUME /app/statCalcData
 
 RUN apk update && \
+  # wrap process in --init in order to handle kernel signals
+  # https://github.com/krallin/tini#using-tini
   apk add --no-cache tini && \
   rm -rf /var/cache/apk/*
 
